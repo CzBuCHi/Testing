@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/IcarusHosting.Server.HostingSystem.Services" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/IcarusHosting.Server.HostingSystem.Services" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://admin.cstechnologies.cz/HostingSystem/ProjectsManagerService.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://admin.cstechnologies.cz/HostingSystem/ProjectsManagerService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="UserInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LoginName" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Perms" nillable="true" type="q1:ArrayOfstring" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UserInfo" nillable="true" type="tns:UserInfo" />
+  <xs:complexType name="ArrayOfUserInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UserInfo" nillable="true" type="tns:UserInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUserInfo" nillable="true" type="tns:ArrayOfUserInfo" />
+  <xs:complexType name="AccessLogInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Identifner" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TsCreated" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AccessLogInfo" nillable="true" type="tns:AccessLogInfo" />
+  <xs:complexType name="ArrayOfAccessLogInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessLogInfo" nillable="true" type="tns:AccessLogInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAccessLogInfo" nillable="true" type="tns:ArrayOfAccessLogInfo" />
+  <xs:complexType name="HostingWebApplicationInfoComplex">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ApplicationInfo" nillable="true" type="tns:HostingWebApplicationInfo" />
+      <xs:element minOccurs="0" name="Bindings" nillable="true" type="tns:ArrayOfHostingWebApplicationBindingInfo" />
+      <xs:element minOccurs="0" name="ServerInfo" nillable="true" type="tns:HostingWebServerInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="HostingWebApplicationInfoComplex" nillable="true" type="tns:HostingWebApplicationInfoComplex" />
+  <xs:complexType name="HostingWebApplicationInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BindingsCount" type="xs:int" />
+      <xs:element minOccurs="0" name="DomainsCount" type="xs:int" />
+      <xs:element minOccurs="0" name="FirmId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="FirmIdentifier" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FirmName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Identifier" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Measured" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="NotPublished" type="xs:boolean" />
+      <xs:element minOccurs="0" name="ProjectIdentifier" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ServerId" type="xs:int" />
+      <xs:element minOccurs="0" name="StatusCode" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="UrlReport" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UrlTest" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="WebApplicationId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="HostingWebApplicationInfo" nillable="true" type="tns:HostingWebApplicationInfo" />
+  <xs:complexType name="ArrayOfHostingWebApplicationBindingInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="HostingWebApplicationBindingInfo" nillable="true" type="tns:HostingWebApplicationBindingInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfHostingWebApplicationBindingInfo" nillable="true" type="tns:ArrayOfHostingWebApplicationBindingInfo" />
+  <xs:complexType name="HostingWebApplicationBindingInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Domain" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsHttps" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="HostingWebApplicationBindingInfo" nillable="true" type="tns:HostingWebApplicationBindingInfo" />
+  <xs:complexType name="HostingWebServerInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BaseAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BaseIp" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ServerId" type="xs:int" />
+      <xs:element minOccurs="0" name="ServerIdentifier" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ServerPlatform" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ServerTestDomain" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="HostingWebServerInfo" nillable="true" type="tns:HostingWebServerInfo" />
+  <xs:complexType name="ArrayOfHostingWebApplicationInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="HostingWebApplicationInfo" nillable="true" type="tns:HostingWebApplicationInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfHostingWebApplicationInfo" nillable="true" type="tns:ArrayOfHostingWebApplicationInfo" />
+  <xs:complexType name="ArrayOfHostingWebServerInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="HostingWebServerInfo" nillable="true" type="tns:HostingWebServerInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfHostingWebServerInfo" nillable="true" type="tns:ArrayOfHostingWebServerInfo" />
+  <xs:complexType name="NetDriveInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ServerUrl" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Token" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="NetDriveInfo" nillable="true" type="tns:NetDriveInfo" />
+</xs:schema>
