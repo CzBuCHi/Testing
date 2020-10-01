@@ -2,30 +2,16 @@
 
 namespace ProjectsManager
 {
+
     public class Configuration
     {
-        [NotNull]
-        public readonly string DiffPath = @"c:\ProjectsManager\Diff";
-
-        [NotNull]
-        public readonly string FtpPassword = "";
-
-        [NotNull]
-        public readonly string FtpUserName = "";
-
-        [NotNull]
-        public readonly string LocalPath = @"c:\ProjectsManager\Cache";
-
-        [NotNull]
-        public readonly string LoginName = "marek.buchar";
-
-        [NotNull]
-        public readonly string Password = "";
-
-        [NotNull]
-        public readonly string ServiceUrl = "";
-
-        [NotNull]
-        public readonly string TortoiseGitMerge = @"c:\Program Files\TortoiseGit\bin\TortoiseGitMerge.exe";
+        public string DiffPath { get; set; }
+        public string FtpPassword { get; set; }
+        public string FtpUserName { get; set; }
+        public string LocalPath { get; set; }
+        public string LoginName { get; set; }
+        public string Password { get; set; }
+        public string ServiceUrl { get; set; }
+        public string TortoiseGitMerge { get; set; }
     }
 }
