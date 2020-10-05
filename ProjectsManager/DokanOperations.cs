@@ -347,6 +347,14 @@ namespace ProjectsManager
 
                         break;
 
+                    case FileMode.OpenOrCreate:
+                        filePath = GetBasePath(fileName);
+                        if (!Directory.Exists(filePath) && !File.Exists(filePath)) {
+                            filePath = GetMinePath(fileName);
+                        }
+
+                        break;
+
                     case FileMode.Create:
                         filePath = GetMinePath(fileName);
                         break;
