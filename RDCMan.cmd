@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Microsoft\Remote Desktop Connection Manager\RDCMan.exe" /c 92.222.117.195

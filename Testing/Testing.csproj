@@ -4,13 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>ProjectsManager</AssemblyName>
+    <AssemblyName>Testing</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <FileAlignment>512</FileAlignment>
     <OutputType>Exe</OutputType>
-    <ProjectGuid>{26F86E44-23C5-4ADB-9E6C-68CF161B4A02}</ProjectGuid>
-    <RootNamespace>ProjectsManager</RootNamespace>
+    <ProjectGuid>{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}</ProjectGuid>
+    <RootNamespace>Testing</RootNamespace>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -50,24 +50,20 @@
     <Reference Include="Centaur.Core">
       <HintPath>..\references\Centaur.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DokanNet">
-      <HintPath>..\DokanNet\bin\Debug\net46\DokanNet.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\references\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DokanOperations.cs" />
-    <Compile Include="DokanOperationsBase.cs" />
-    <Compile Include="FileSystemInfoComparer.cs" />
-    <Compile Include="FtpClient.cs" />
-    <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DokanOperations.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="DokanNet" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
