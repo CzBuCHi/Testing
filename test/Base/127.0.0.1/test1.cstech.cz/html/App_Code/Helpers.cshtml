@@ -1,0 +1,45 @@
+﻿@using System
+@using System.Collections.Generic
+@using EasyWeb.Server.ProductsList.Data
+@using EasyWeb.Server.ProductsList.DataAccess
+@using WebSiteAppCode
+
+@helper RenderAvailibility(Guid itemId, string size, string color) {
+    DataModelProductsListSubDataListProvider providerSubData = new DataModelProductsListSubDataListProvider();
+    providerSubData.Request.SubDataTypeId = Guid.Parse("4b38c96f-392f-491f-a5d1-f950a7bb2c0b");
+    providerSubData.Request.ProductItemId = itemId;
+    IProductsListSubDataListModel subData = providerSubData.SelectDataModel();
+
+    if (subData == null) {
+        <div>Nelze načíst data!</div>
+    } else {
+        IEnumerable<IProductsListSubDataListDataObject> q = subData.Items.OrderBy(i => i.Id);
+        if (!string.IsNullOrEmpty(size)) {
+            q = q.Where(i => i.UserData1 == size);
+        }
+        if (!string.IsNullOrEmpty(color)) {
+            q = q.Where(i => i.UserData5 == color);
+        }
+        IProductsListSubDataListDataObject subItem = q.FirstOrDefault();
+        if (subItem != null) {
+            <span class="skladem" style="background: url('/templates/main/images/@(subItem.UserData2.Replace(' ', '_')).png') 0 0 no-repeat">@subItem.UserData2</span>
+        }
+    }
+}
+
+
+
+@helper RenderColors(IEnumerable<string[]> colors) {
+    if (colors == null) {
+        <div>Nelze načíst data!</div>
+    }
+    else
+    {
+        foreach (var data in colors)
+        {
+            var color = data[0];
+            var title = data[1];
+            <a style="background-color: @ProductsColors.GetColor(color)" href="javascript:void(0);" data-color-indexer="@color" title="@title">@color</a>
+        }
+    }
+}

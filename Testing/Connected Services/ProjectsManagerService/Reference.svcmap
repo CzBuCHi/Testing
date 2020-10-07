@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="8e765107-b955-40e0-b951-50e48e1736e4" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>true</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>false</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost/icarushosting/HostingSystem/ProjectsManagerService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="ProjectsManagerService.wsdl" MetadataType="Wsdl" ID="3a006a57-dcad-4495-a0c8-2dfb53bbb8c2" SourceId="1" SourceUrl="http://localhost/icarushosting/HostingSystem/ProjectsManagerService.svc" />
+    <MetadataFile FileName="ProjectsManagerService.xsd" MetadataType="Schema" ID="a41abb6b-7a64-425a-88b0-dcd5f5924cb1" SourceId="1" SourceUrl="http://work-marek/icarushosting/HostingSystem/ProjectsManagerService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ProjectsManagerService1.xsd" MetadataType="Schema" ID="37280a90-0a3a-44a9-b408-75313c6b4996" SourceId="1" SourceUrl="http://work-marek/icarushosting/HostingSystem/ProjectsManagerService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ProjectsManagerService2.xsd" MetadataType="Schema" ID="ae066fd4-4f2e-4051-b830-f8b86e8ca6e4" SourceId="1" SourceUrl="http://work-marek/icarushosting/HostingSystem/ProjectsManagerService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ProjectsManagerService3.xsd" MetadataType="Schema" ID="34415156-d81a-42d3-b403-7e3aaec711f2" SourceId="1" SourceUrl="http://work-marek/icarushosting/HostingSystem/ProjectsManagerService.svc?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

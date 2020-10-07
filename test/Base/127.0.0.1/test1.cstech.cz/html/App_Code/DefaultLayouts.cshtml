@@ -1,0 +1,72 @@
+﻿@using WebSiteAppCode
+
+@helper CheckBox(Func<string> fieldName, Func<IHtmlString> label, Func<IHtmlString> field, Func<IHtmlString> validator) {
+    <div class="formField">
+        <div class="label">
+            @label()
+        </div>
+        <div class="edit" data-val-marker="@fieldName()">
+            @field()
+            @validator()
+        </div>
+        <div class="cleaner"></div>
+    </div>
+}
+
+@helper Password(Func<string> fieldName, Func<IHtmlString> label, Func<IHtmlString> field, Func<IHtmlString> validator) {
+    <div class="formField">
+        <div class="label">
+            @label()
+        </div>
+        <div class="edit" data-val-marker="@fieldName()">
+            @field()
+            @validator()
+        </div>
+        <div class="cleaner"></div>
+    </div>
+}
+        
+@helper TextArea(Func<string> fieldName, Func<IHtmlString> label, Func<IHtmlString> field, Func<IHtmlString> validator) {
+    <div class="formField">
+        <div class="label">
+            @label()
+        </div>
+        <div class="edit" data-val-marker="@fieldName()">
+            @field()
+            @validator()
+        </div>
+        <div class="cleaner"></div>
+    </div>
+}
+
+@helper TextBox(Func<string> fieldName, Func<IHtmlString> label, Func<IHtmlString> field, Func<IHtmlString> validator) {
+    <div class="formField">
+        <div class="label">
+            @label()
+        </div>
+        <div class="edit" data-val-marker="@fieldName()">
+            @field()
+            @validator()
+        </div>
+        <div class="cleaner"></div>
+    </div>
+}
+
+@helper ReadOnly(Func<string> fieldName, Func<IHtmlString> label, Func<IHtmlString> value) {
+    <div class="formField">
+        <div class="label">
+            @label()
+        </div>
+        <div class="editRead" data-val-marker="@fieldName()">
+            @value()
+        </div>
+        <div class="cleaner"></div>
+    </div>
+}
+
+@helper Button(Func<IHtmlString> field) {
+    <div class="formField">
+        <div class="editButton">@field()</div>
+        <div class="cleaner"></div>
+    </div>
+}

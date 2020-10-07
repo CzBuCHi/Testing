@@ -12,9 +12,44 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace ProjectsManager
+namespace Testing.Services
 {
-    public class FtpClient
+    public interface IFtpClient
+    {
+        [NotNull]
+        Task DeleteFileAsync([NotNull] string remotePath);
+
+        [NotNull]
+        Task DownloadFileAsync([NotNull] string remotePath, [NotNull] string localPath);
+
+        [NotNull]
+        Task<DateTime?> GetDateTimestampAsync([NotNull] string remotePath);
+
+        [NotNull]
+        Task<long?> GetFileSizeAsync([NotNull] string remotePath);
+
+        [NotNull]
+        [ItemCanBeNull]
+        Task<IReadOnlyCollection<FtpFileSystemInfo>> ListDirectoryAsync([NotNull] string remotePath);
+
+        [NotNull]
+        [ItemNotNull]
+        Task<IReadOnlyCollection<FtpFileSystemInfo>> ListDirectoryTreeAsync([NotNull] string remotePath);
+
+        [NotNull]
+        Task MakeDirectoryAsync([NotNull] string remotePath);
+
+        [NotNull]
+        Task RemoveDirectoryAsync([NotNull] string remotePath);
+
+        [NotNull]
+        Task RenameAsync([NotNull] string remotePath, [NotNull] string renameTo);
+
+        [NotNull]
+        Task UploadFileAsync([NotNull] string remotePath, [NotNull] string localPath);
+    }
+
+    public class FtpClient : IFtpClient
     {
         [NotNull]
         private static readonly Action<FtpWebRequest> _FtpWebRequestMethodMlsd;
@@ -65,16 +100,14 @@ namespace ProjectsManager
             _FtpWebRequestMethodMlsd = lambda.Compile();
         }
 
-        [NotNull]
-        public async Task DeleteFileAsync([NotNull] string remotePath) {
+        public async Task DeleteFileAsync(string remotePath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.DeleteFile;
-            using (FtpWebResponse response = await GetResponseAsync(request)) {
-            }
+            FtpWebResponse response = await GetResponseAsync(request);
+            response?.Dispose();
         }
 
-        [NotNull]
-        public async Task DownloadFileAsync([NotNull] string remotePath, [NotNull] string localPath) {
+        public async Task DownloadFileAsync(string remotePath, string localPath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.DownloadFile;
 
@@ -91,27 +124,23 @@ namespace ProjectsManager
             }
         }
 
-        [NotNull]
-        public async Task<DateTime?> GetDateTimestampAsync([NotNull] string remotePath) {
+        public async Task<DateTime?> GetDateTimestampAsync(string remotePath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
             using (FtpWebResponse response = await GetResponseAsync(request)) {
-                return response != null ? response.LastModified : (DateTime?)null;
+                return response != null ? response.LastModified : (DateTime?) null;
             }
         }
 
-        [NotNull]
-        public async Task<long?> GetFileSizeAsync([NotNull] string remotePath) {
+        public async Task<long?> GetFileSizeAsync(string remotePath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.GetFileSize;
             using (FtpWebResponse response = await GetResponseAsync(request)) {
-                return response != null ? response.ContentLength: (long?) null; 
+                return response != null ? response.ContentLength : (long?) null;
             }
         }
 
-        [NotNull]
-        [ItemCanBeNull]
-        public async Task<IReadOnlyCollection<FtpFileSystemInfo>> ListDirectoryAsync([NotNull] string remotePath) {
+        public async Task<IReadOnlyCollection<FtpFileSystemInfo>> ListDirectoryAsync(string remotePath) {
             FtpWebRequest request = CreateRequest(remotePath);
             _FtpWebRequestMethodMlsd(request);
 
@@ -134,7 +163,14 @@ namespace ProjectsManager
                                 let kvp = o.Split('=')
                                 group kvp.Length == 2 ? kvp[1] : o.TrimStart() by kvp.Length == 2 ? kvp[0] : string.Empty;
 
-                            Dictionary<string, string> parts = lineParserQuery.ToDictionary(o => o.Key, o => o.First());
+                            Dictionary<string, string> parts = lineParserQuery.ToDictionary(o => {
+                                Debug.Assert(o != null, nameof(o) + " != null");
+                                return o.Key;
+                            }, o => {
+                                Debug.Assert(o != null, nameof(o) + " != null");
+                                return o.First();
+                            });
+
                             string name = parts[string.Empty];
                             DateTime modify = DateTime.ParseExact(parts["modify"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
                             Debug.Assert(name != null, nameof(name) + " != null");
@@ -158,9 +194,7 @@ namespace ProjectsManager
             }
         }
 
-        [NotNull]
-        [ItemNotNull]
-        public async Task<IReadOnlyCollection<FtpFileSystemInfo>> ListDirectoryTreeAsync([NotNull] string remotePath) {
+        public async Task<IReadOnlyCollection<FtpFileSystemInfo>> ListDirectoryTreeAsync(string remotePath) {
             List<FtpFileSystemInfo> list = new List<FtpFileSystemInfo>();
 
             List<FtpDirectoryInfo> dirs = new List<FtpDirectoryInfo>();
@@ -217,33 +251,29 @@ namespace ProjectsManager
             return list.ToArray();
         }
 
-        [NotNull]
-        public async Task MakeDirectoryAsync([NotNull] string remotePath) {
+        public async Task MakeDirectoryAsync(string remotePath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.MakeDirectory;
-            using (FtpWebResponse response = await GetResponseAsync(request)) {
-            }
+            FtpWebResponse response = await GetResponseAsync(request);
+            response?.Dispose();
         }
 
-        [NotNull]
-        public async Task RemoveDirectoryAsync([NotNull] string remotePath) {
+        public async Task RemoveDirectoryAsync(string remotePath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.RemoveDirectory;
-            using (FtpWebResponse response = await GetResponseAsync(request)) {
-            }
+            FtpWebResponse response = await GetResponseAsync(request);
+            response?.Dispose();
         }
 
-        [NotNull]
-        public async Task RenameAsync([NotNull] string remotePath, [NotNull] string renameTo) {
+        public async Task RenameAsync(string remotePath, string renameTo) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.Rename;
             request.RenameTo = renameTo;
-            using (FtpWebResponse response = await GetResponseAsync(request)) {
-            }
+            FtpWebResponse response = await GetResponseAsync(request);
+            response?.Dispose();
         }
 
-        [NotNull]
-        public async Task UploadFileAsync([NotNull] string remotePath, [NotNull] string localPath) {
+        public async Task UploadFileAsync(string remotePath, string localPath) {
             FtpWebRequest request = CreateRequest(remotePath);
             request.Method = WebRequestMethods.Ftp.UploadFile;
 
@@ -255,15 +285,15 @@ namespace ProjectsManager
                 }
             }
 
-            using (FtpWebResponse response = await GetResponseAsync(request)) {
-            }
+            FtpWebResponse response = await GetResponseAsync(request);
+            response?.Dispose();
         }
 
         [NotNull]
         [ItemCanBeNull]
         private static async Task<FtpWebResponse> GetResponseAsync([NotNull] FtpWebRequest request) {
             try {
-                return (FtpWebResponse)await request.GetResponseAsync();
+                return (FtpWebResponse) await request.GetResponseAsync();
             } catch (WebException exc) {
                 Console.WriteLine(exc);
                 Debug.Assert(exc.Response != null, "exc.Response != null");

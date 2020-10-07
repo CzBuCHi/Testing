@@ -38,6 +38,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,20 +52,107 @@
     <Reference Include="Centaur.Core">
       <HintPath>..\references\Centaur.Core.dll</HintPath>
     </Reference>
+    <Reference Include="DokanNet">
+      <HintPath>..\DokanNet\bin\Debug\net46\DokanNet.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\references\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connected Services\ProjectsManagerService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Configuration.cs" />
+    <Compile Include="Services\DataStore.cs" />
     <Compile Include="Services\DokanOperations.cs" />
+    <Compile Include="Services\FtpClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Connected Services\ProjectsManagerService\configuration.svcinfo" />
+    <None Include="Connected Services\ProjectsManagerService\configuration91.svcinfo" />
+    <None Include="Connected Services\ProjectsManagerService\ProjectsManagerService.wsdl" />
+    <None Include="Connected Services\ProjectsManagerService\ProjectsManagerService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\ProjectsManagerService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\ProjectsManagerService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\ProjectsManagerService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.AddToAccessLogResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetCentaurUserInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetDebugFlagResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetEasyWebUsersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetEasyWebVersionResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetLastAccessLogAllResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetLastAccessLogResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetWebApplicationInfoComplexResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetWebApplicationListAllResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.GetWebServerListAllResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.NetDriveConnectResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.NetDriveDisconnectResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.ReadSmtpConfigResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.RequestEasyWebAccessResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.RestartApplicationResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.SetDebugFlagResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.UpdateWebApplicationMeasurementsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ProjectsManagerService\Testing.ProjectsManagerService.WriteSmtpConfigResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DokanNet" />
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\ProjectsManagerService\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
