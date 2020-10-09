@@ -38,6 +38,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
@@ -71,6 +72,7 @@
     <Compile Include="Services\DataStore.cs" />
     <Compile Include="Services\DokanOperations.cs" />
     <Compile Include="Services\FtpClient.cs" />
+    <Compile Include="Services\ChangesWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
