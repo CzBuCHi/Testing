@@ -318,6 +318,10 @@ namespace Testing.Services
     {
         public FtpDirectoryInfo([NotNull] string name, DateTime modify) : base(name, modify) {
         }
+
+        public override string ToString() {
+            return $"D|{FullName} - {Modify}";
+        }
     }
 
     [DebuggerDisplay("F|{FullName} - {SizeString,nq}; {Modify}")]
@@ -344,6 +348,10 @@ namespace Testing.Services
 
                 return value.ToString("0.##", CultureInfo.InvariantCulture) + SizePrefixes[index];
             }
+        }
+
+        public override string ToString() {
+            return $"F|{FullName} - {SizeString}; {Modify}";
         }
     }
 
