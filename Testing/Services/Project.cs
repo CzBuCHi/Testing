@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
+using DokanNet;
+using DokanNet.Logging;
 using JetBrains.Annotations;
 
 namespace Testing.Services
@@ -34,6 +36,9 @@ namespace Testing.Services
         [NotNull]
         private readonly string _ServerPath;
 
+        [NotNull]
+        private readonly string _WorkerPath;
+
         public Project([NotNull] string applicationIdentifier) {
             _ApplicationIdentifier = applicationIdentifier;
 
@@ -54,11 +59,19 @@ namespace Testing.Services
             if (!Directory.Exists(_ServerPath)) {
                 Directory.CreateDirectory(_ServerPath);
             }
+
+            _WorkerPath = Path.Combine(@"c:\projects\Testing\test\Worker", host);
+            if (!Directory.Exists(_WorkerPath)) {
+                Directory.CreateDirectory(_WorkerPath);
+            }
         }
 
         public async Task Pull() {
             IReadOnlyCollection<FtpFileSystemInfo> list = await _Ftp.ListDirectoryTreeAsync("/" + _ApplicationIdentifier + "/html");
             string htmlPath = Path.Combine(_BasePath, _ApplicationIdentifier, "html");
+            if (!Directory.Exists(htmlPath)) {
+                Directory.CreateDirectory(htmlPath);
+            }
 
             int prefix = _BasePath.Length;
 
@@ -87,7 +100,6 @@ namespace Testing.Services
                     Directory.SetLastWriteTime(localPath, pair.Item1.Modify);
                 }
             }
-
 
             // sync files to match server, override local
             FtpFileInfo[] ftpFiles = list.OfType<FtpFileInfo>().ToArray();
@@ -123,6 +135,7 @@ namespace Testing.Services
 
                         if (download) {
                             string localPath = _BasePath + pair.Item1.FullName.Replace('/', '\\');
+                            Console.WriteLine(@"DOWNLOAD: " + localPath);
                             await _Ftp.DownloadFileAsync(pair.Item1.FullName, localPath);
                             File.SetLastWriteTime(localPath, pair.Item1.Modify);
                         }
@@ -136,10 +149,22 @@ namespace Testing.Services
             Task.WhenAll(tasks).Wait();
         }
 
-        public void Watch() {
+        public void Initialize() {
+            DokanOperations mirror = new DokanOperations(_BasePath, _MinePath);
+            Task.Factory.StartNew(() => {
+                mirror.Mount(_WorkerPath, DokanOptions.DebugMode | DokanOptions.EnableNotificationAPI, 1, new NullLogger());
+            });
+
             Watcher watcher = new Watcher(_MinePath);
             watcher.Change += OnWatcherOnChange;
             watcher.EnableRaisingEvents = true;
+
+
+            Console.WriteLine(@"STOP");
+            Console.ReadLine();
+
+            Dokan.RemoveMountPoint(_WorkerPath);
+            Directory.Delete(_WorkerPath);
         }
 
         private void OnWatcherOnChange(WatcherChangeType type, string path, string oldPath) {

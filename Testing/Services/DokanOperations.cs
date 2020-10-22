@@ -369,14 +369,6 @@ namespace Testing.Services
 
         [NotNull]
         protected string GetMinePath([NotNull] string fileName) {
-            if (fileName == null) {
-                throw new ArgumentNullException(nameof(fileName));
-            }
-
-            if (fileName == null) {
-                throw new ArgumentNullException(nameof(fileName));
-            }
-
             return _MinePath + fileName;
         }
 
@@ -403,7 +395,7 @@ namespace Testing.Services
                         break;
                     }
                     case FileMode.CreateNew: {
-                        string filePath = GetBasePath(fileName);
+                        string filePath = GetMinePath(fileName);
                         if (Directory.Exists(filePath)) {
                             return DokanResult.FileExists;
                         }
@@ -415,7 +407,7 @@ namespace Testing.Services
                         } catch (IOException) {
                         }
 
-                        Directory.CreateDirectory(GetBasePath(fileName));
+                        Directory.CreateDirectory(filePath);
                         break;
                     }
                 }
