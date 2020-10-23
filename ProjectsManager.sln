@@ -5,6 +5,11 @@ VisualStudioVersion = 15.0.27428.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DokanNet", "DokanNet\DokanNet.csproj", "{75861EAE-B827-427E-9812-9FF78A9A6857}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DokanNetMirror", "DokanNetMirror\DokanNetMirror.csproj", "{9235F6F4-DB7D-4345-AA52-1649F4A79814}"
+	ProjectSection(ProjectDependencies) = postProject
+		{75861EAE-B827-427E-9812-9FF78A9A6857} = {75861EAE-B827-427E-9812-9FF78A9A6857}
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{75861EAE-B827-427E-9812-9FF78A9A6857} = {75861EAE-B827-427E-9812-9FF78A9A6857}
@@ -20,6 +25,10 @@ Global
 		{75861EAE-B827-427E-9812-9FF78A9A6857}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75861EAE-B827-427E-9812-9FF78A9A6857}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75861EAE-B827-427E-9812-9FF78A9A6857}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9235F6F4-DB7D-4345-AA52-1649F4A79814}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9235F6F4-DB7D-4345-AA52-1649F4A79814}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9235F6F4-DB7D-4345-AA52-1649F4A79814}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9235F6F4-DB7D-4345-AA52-1649F4A79814}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
