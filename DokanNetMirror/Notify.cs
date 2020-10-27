@@ -56,6 +56,15 @@ namespace DokanNetMirror
             dirFsWatcher.EnableRaisingEvents = true;
         }
 
+        public static void Stop() {
+            commonFsWatcher.EnableRaisingEvents = false;
+            fileFsWatcher.EnableRaisingEvents = false; 
+            dirFsWatcher.EnableRaisingEvents = false;
+            commonFsWatcher.Dispose();
+            fileFsWatcher.Dispose();
+            dirFsWatcher.Dispose();
+        }
+
         private static string AlterPathToMountPath(string path)
         {
             var relativeMirrorPath = path.Substring(sourcePath.Length).TrimStart('\\');

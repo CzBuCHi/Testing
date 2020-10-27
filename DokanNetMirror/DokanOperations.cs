@@ -6,29 +6,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using DokanNet;
-using DokanNet.Logging;
 using JetBrains.Annotations;
 using static DokanNet.FormatProviders;
 using FileAccess = DokanNet.FileAccess;
 
 namespace DokanNetMirror
 {
-    internal class Mirror : IDokanOperations
+    internal partial class DokanOperations : IDokanOperations
     {
-        private const FileAccess DataAccess = FileAccess.ReadData | FileAccess.WriteData | FileAccess.AppendData | FileAccess.Execute | FileAccess.GenericExecute | FileAccess.GenericWrite | FileAccess.GenericRead;
-
-        private const FileAccess DataWriteAccess = FileAccess.WriteData | FileAccess.AppendData | FileAccess.Delete | FileAccess.GenericWrite;
-
-        [NotNull]
-        private readonly ConsoleLogger _Logger = new ConsoleLogger("[Mirror] ");
-
-        [NotNull]
-        private readonly string _Path;
-
-        public Mirror([NotNull] string path) {
-            _Path = path;
-        }
-
         public void Cleanup([NotNull] string fileName, [NotNull] IDokanFileInfo info) {
 #if TRACE
             if (info.Context != null) {
@@ -41,31 +26,18 @@ namespace DokanNetMirror
 
             if (info.DeleteOnClose) {
                 if (info.IsDirectory) {
-                    Directory.Delete(GetPath(fileName));
+                    Directory.Delete(GetBasePath(fileName));
                 } else {
-                    File.Delete(GetPath(fileName));
+                    File.Delete(GetBasePath(fileName));
                 }
             }
 
             Trace(nameof(Cleanup), fileName, info, DokanResult.Success);
         }
 
-        public void CloseFile([NotNull] string fileName, [NotNull] IDokanFileInfo info) {
-#if TRACE
-            if (info.Context != null) {
-                Console.WriteLine(DokanFormat($"{nameof(CloseFile)}('{fileName}', {info} - entering"));
-            }
-#endif
-
-            (info.Context as FileStream)?.Dispose();
-            info.Context = null;
-            Trace(nameof(CloseFile), fileName, info, DokanResult.Success);
-            // could recreate cleanup code here but this is not called sometimes
-        }
-
         public NtStatus CreateFile([NotNull] string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, [NotNull] IDokanFileInfo info) {
             NtStatus result = DokanResult.Success;
-            string filePath = GetPath(fileName);
+            string filePath = GetBasePath(fileName);
 
             if (info.IsDirectory) {
                 try {
@@ -100,7 +72,7 @@ namespace DokanNetMirror
                             } catch (IOException) {
                             }
 
-                            Directory.CreateDirectory(GetPath(fileName));
+                            Directory.CreateDirectory(GetBasePath(fileName));
                             break;
                     }
                 } catch (UnauthorizedAccessException) {
@@ -199,12 +171,12 @@ namespace DokanNetMirror
         }
 
         public NtStatus DeleteDirectory([NotNull] string fileName, [NotNull] IDokanFileInfo info) {
-            return Trace(nameof(DeleteDirectory), fileName, info, Directory.EnumerateFileSystemEntries(GetPath(fileName)).Any() ? DokanResult.DirectoryNotEmpty : DokanResult.Success);
+            return Trace(nameof(DeleteDirectory), fileName, info, Directory.EnumerateFileSystemEntries(GetBasePath(fileName)).Any() ? DokanResult.DirectoryNotEmpty : DokanResult.Success);
             // if dir is not empty it can't be deleted
         }
 
         public NtStatus DeleteFile([NotNull] string fileName, [NotNull] IDokanFileInfo info) {
-            string filePath = GetPath(fileName);
+            string filePath = GetBasePath(fileName);
 
             if (Directory.Exists(filePath)) {
                 return Trace(nameof(DeleteFile), fileName, info, DokanResult.AccessDenied);
@@ -230,7 +202,7 @@ namespace DokanNetMirror
 
         public NtStatus FindFilesWithPattern([NotNull] string fileName, [NotNull] string searchPattern, [NotNull] out IList<FileInformation> files, [NotNull] IDokanFileInfo info) {
             files =
-                new DirectoryInfo(GetPath(fileName))
+                new DirectoryInfo(GetBasePath(fileName))
                    .EnumerateFileSystemInfos()
                    .Where(finfo => {
                         Debug.Assert(finfo != null, nameof(finfo) + " != null");
@@ -248,37 +220,9 @@ namespace DokanNetMirror
             return Trace(nameof(FindFilesWithPattern), fileName, info, DokanResult.Success);
         }
 
-        public NtStatus FindStreams([NotNull] string fileName, [NotNull] out IList<FileInformation> streams, [NotNull] IDokanFileInfo info) {
-            streams = new FileInformation[0];
-            return Trace(nameof(FindStreams), fileName, info, DokanResult.NotImplemented);
-        }
-
-        public NtStatus FlushFileBuffers([NotNull] string fileName, [NotNull] IDokanFileInfo info) {
-            try {
-                FileStream fileStream = info.Context as FileStream;
-                Debug.Assert(fileStream != null, nameof(fileStream) + " != null");
-                fileStream.Flush();
-                return Trace(nameof(FlushFileBuffers), fileName, info, DokanResult.Success);
-            } catch (IOException) {
-                return Trace(nameof(FlushFileBuffers), fileName, info, DokanResult.DiskFull);
-            }
-        }
-
-        public NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, [NotNull] IDokanFileInfo info) {
-            DriveInfo dinfo = DriveInfo.GetDrives().Single(di => {
-                Debug.Assert(di != null, nameof(di) + " != null");
-                return string.Equals(di.RootDirectory.Name, Path.GetPathRoot(_Path + "\\"), StringComparison.OrdinalIgnoreCase);
-            });
-            Debug.Assert(dinfo != null, nameof(dinfo) + " != null");
-            freeBytesAvailable = dinfo.TotalFreeSpace;
-            totalNumberOfBytes = dinfo.TotalSize;
-            totalNumberOfFreeBytes = dinfo.AvailableFreeSpace;
-            return Trace(nameof(GetDiskFreeSpace), null, info, DokanResult.Success, "out " + freeBytesAvailable, "out " + totalNumberOfBytes, "out " + totalNumberOfFreeBytes);
-        }
-
         public NtStatus GetFileInformation([NotNull] string fileName, out FileInformation fileInfo, [NotNull] IDokanFileInfo info) {
             // may be called with info.Context == null, but usually it isn't
-            string filePath = GetPath(fileName);
+            string filePath = GetBasePath(fileName);
             FileSystemInfo finfo = new FileInfo(filePath);
             if (!finfo.Exists) {
                 finfo = new DirectoryInfo(filePath);
@@ -298,8 +242,8 @@ namespace DokanNetMirror
         public NtStatus GetFileSecurity([NotNull] string fileName, out FileSystemSecurity security, AccessControlSections sections, [NotNull] IDokanFileInfo info) {
             try {
                 security = info.IsDirectory
-                    ? (FileSystemSecurity) Directory.GetAccessControl(GetPath(fileName))
-                    : File.GetAccessControl(GetPath(fileName));
+                    ? (FileSystemSecurity) Directory.GetAccessControl(GetBasePath(fileName))
+                    : File.GetAccessControl(GetBasePath(fileName));
                 return Trace(nameof(GetFileSecurity), fileName, info, DokanResult.Success, sections.ToString());
             } catch (UnauthorizedAccessException) {
                 security = null;
@@ -307,32 +251,9 @@ namespace DokanNetMirror
             }
         }
 
-        public NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName, out uint maximumComponentLength, [NotNull] IDokanFileInfo info) {
-            volumeLabel = "DOKAN";
-            fileSystemName = "NTFS";
-            maximumComponentLength = 256;
-            features = FileSystemFeatures.CasePreservedNames | FileSystemFeatures.CaseSensitiveSearch | FileSystemFeatures.PersistentAcls | FileSystemFeatures.SupportsRemoteStorage | FileSystemFeatures.UnicodeOnDisk;
-            return Trace(nameof(GetVolumeInformation), null, info, DokanResult.Success, "out " + volumeLabel, "out " + features, "out " + fileSystemName);
-        }
-
-        public NtStatus LockFile([NotNull] string fileName, long offset, long length, [NotNull] IDokanFileInfo info) {
-            try {
-                FileStream fileStream = info.Context as FileStream;
-                Debug.Assert(fileStream != null, nameof(fileStream) + " != null");
-                fileStream.Lock(offset, length);
-                return Trace(nameof(LockFile), fileName, info, DokanResult.Success, offset, length);
-            } catch (IOException) {
-                return Trace(nameof(LockFile), fileName, info, DokanResult.AccessDenied, offset, length);
-            }
-        }
-
-        public NtStatus Mounted([NotNull] IDokanFileInfo info) {
-            return Trace(nameof(Mounted), null, info, DokanResult.Success);
-        }
-
         public NtStatus MoveFile([NotNull] string oldName, [NotNull] string newName, bool replace, [NotNull] IDokanFileInfo info) {
-            string oldpath = GetPath(oldName);
-            string newpath = GetPath(newName);
+            string oldpath = GetBasePath(oldName);
+            string newpath = GetBasePath(newName);
 
             (info.Context as FileStream)?.Dispose();
             info.Context = null;
@@ -374,7 +295,8 @@ namespace DokanNetMirror
             FileStream fileStream = info.Context as FileStream;
             if (fileStream == null) // memory mapped read
             {
-                using (FileStream stream = new FileStream(GetPath(fileName), FileMode.Open, System.IO.FileAccess.Read)) {
+                _Logger.Info("ReadFile: NO Context");
+                using (FileStream stream = new FileStream(GetBasePath(fileName), FileMode.Open, System.IO.FileAccess.Read)) {
                     stream.Position = offset;
                     bytesRead = stream.Read(buffer, 0, buffer.Length);
                 }
@@ -390,34 +312,12 @@ namespace DokanNetMirror
             return Trace(nameof(ReadFile), fileName, info, DokanResult.Success, "out " + bytesRead, offset);
         }
 
-        public NtStatus SetAllocationSize([NotNull] string fileName, long length, [NotNull] IDokanFileInfo info) {
-            try {
-                FileStream fileStream = info.Context as FileStream;
-                Debug.Assert(fileStream != null, nameof(fileStream) + " != null");
-                fileStream.SetLength(length);
-                return Trace(nameof(SetAllocationSize), fileName, info, DokanResult.Success, length);
-            } catch (IOException) {
-                return Trace(nameof(SetAllocationSize), fileName, info, DokanResult.DiskFull, length);
-            }
-        }
-
-        public NtStatus SetEndOfFile([NotNull] string fileName, long length, [NotNull] IDokanFileInfo info) {
-            try {
-                FileStream fileStream = info.Context as FileStream;
-                Debug.Assert(fileStream != null, nameof(fileStream) + " != null");
-                fileStream.SetLength(length);
-                return Trace(nameof(SetEndOfFile), fileName, info, DokanResult.Success, length);
-            } catch (IOException) {
-                return Trace(nameof(SetEndOfFile), fileName, info, DokanResult.DiskFull, length);
-            }
-        }
-
         public NtStatus SetFileAttributes([NotNull] string fileName, FileAttributes attributes, [NotNull] IDokanFileInfo info) {
             try {
                 // MS-FSCC 2.6 File Attributes : There is no file attribute with the value 0x00000000
                 // because a value of 0x00000000 in the FileAttributes field means that the file attributes for this file MUST NOT be changed when setting basic information for the file
                 if (attributes != 0) {
-                    File.SetAttributes(GetPath(fileName), attributes);
+                    File.SetAttributes(GetBasePath(fileName), attributes);
                 }
 
                 return Trace(nameof(SetFileAttributes), fileName, info, DokanResult.Success, attributes.ToString());
@@ -433,9 +333,9 @@ namespace DokanNetMirror
         public NtStatus SetFileSecurity([NotNull] string fileName, [NotNull] FileSystemSecurity security, AccessControlSections sections, [NotNull] IDokanFileInfo info) {
             try {
                 if (info.IsDirectory) {
-                    Directory.SetAccessControl(GetPath(fileName), (DirectorySecurity) security);
+                    Directory.SetAccessControl(GetBasePath(fileName), (DirectorySecurity) security);
                 } else {
-                    File.SetAccessControl(GetPath(fileName), (FileSecurity) security);
+                    File.SetAccessControl(GetBasePath(fileName), (FileSecurity) security);
                 }
 
                 return Trace(nameof(SetFileSecurity), fileName, info, DokanResult.Success, sections.ToString());
@@ -457,7 +357,7 @@ namespace DokanNetMirror
                     throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error()) ?? new Exception("Unknown Win32 Error");
                 }
 
-                string filePath = GetPath(fileName);
+                string filePath = GetBasePath(fileName);
 
                 if (creationTime.HasValue) {
                     File.SetCreationTime(filePath, creationTime.Value);
@@ -479,25 +379,11 @@ namespace DokanNetMirror
             }
         }
 
-        public NtStatus UnlockFile([NotNull] string fileName, long offset, long length, [NotNull] IDokanFileInfo info) {
-            try {
-                FileStream fileStream = info.Context as FileStream;
-                Debug.Assert(fileStream != null, nameof(fileStream) + " != null");
-                fileStream.Unlock(offset, length);
-                return Trace(nameof(UnlockFile), fileName, info, DokanResult.Success, offset, length);
-            } catch (IOException) {
-                return Trace(nameof(UnlockFile), fileName, info, DokanResult.AccessDenied, offset, length);
-            }
-        }
-
-        public NtStatus Unmounted([NotNull] IDokanFileInfo info) {
-            return Trace(nameof(Unmounted), null, info, DokanResult.Success);
-        }
-
         public NtStatus WriteFile([NotNull] string fileName, [NotNull] byte[] buffer, out int bytesWritten, long offset, [NotNull] IDokanFileInfo info) {
             FileStream fileStream = info.Context as FileStream;
             if (fileStream == null) {
-                using (FileStream stream = new FileStream(GetPath(fileName), FileMode.Open, System.IO.FileAccess.Write)) {
+                _Logger.Info("WriteFile: NO Context");
+                using (FileStream stream = new FileStream(GetBasePath(fileName), FileMode.Open, System.IO.FileAccess.Write)) {
                     stream.Position = offset;
                     stream.Write(buffer, 0, buffer.Length);
                     bytesWritten = buffer.Length;
@@ -513,28 +399,6 @@ namespace DokanNetMirror
             }
 
             return Trace(nameof(WriteFile), fileName, info, DokanResult.Success, "out " + bytesWritten, offset);
-        }
-
-        [NotNull]
-        protected string GetPath([NotNull] string fileName) {
-            return _Path + fileName;
-        }
-
-        protected NtStatus Trace([NotNull] string method, string fileName, [NotNull] IDokanFileInfo info, NtStatus result, params object[] parameters) {
-#if TRACE
-            string extraParameters = parameters != null && parameters.Length > 0 ? ", " + string.Join(", ", parameters.Select(x => string.Format(DefaultFormatProvider, "{0}", x))) : string.Empty;
-            _Logger.Debug(DokanFormat($"{method}('{fileName}', {info}{extraParameters}) -> {result}"));
-#endif
-
-            return result;
-        }
-
-        private NtStatus Trace([NotNull] string method, string fileName, [NotNull] IDokanFileInfo info, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, NtStatus result) {
-#if TRACE
-            _Logger.Debug(DokanFormat($"{method}('{fileName}', {info}, [{access}], [{share}], [{mode}], [{options}], [{attributes}]) -> {result}"));
-#endif
-
-            return result;
         }
     }
 }
