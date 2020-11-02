@@ -4,13 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>DokanNetMirror</AssemblyName>
+    <AssemblyName>DokanNetTesting</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <FileAlignment>512</FileAlignment>
     <OutputType>Exe</OutputType>
-    <ProjectGuid>{9235F6F4-DB7D-4345-AA52-1649F4A79814}</ProjectGuid>
-    <RootNamespace>DokanNetMirror</RootNamespace>
+    <ProjectGuid>{0515452C-9C32-491F-A8F0-A96CB2ADEFFD}</ProjectGuid>
+    <RootNamespace>DokanNetTesting</RootNamespace>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -41,19 +41,21 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="DokanNet" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DokanOperations.Base.cs" />
     <Compile Include="DokanOperations.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="FtpClient.cs" />
     <Compile Include="NativeMethods.cs" />
-    <Compile Include="Notify.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\JetBrains.Annotations.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="DokanNet" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

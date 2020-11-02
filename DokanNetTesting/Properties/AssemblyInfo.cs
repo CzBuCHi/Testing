@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DokanNetMirror")]
+[assembly: AssemblyTitle("DokanNetTesting")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DokanNetMirror")]
+[assembly: AssemblyProduct("DokanNetTesting")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9235f6f4-db7d-4345-aa52-1649f4a79814")]
+[assembly: Guid("0515452c-9c32-491f-a8f0-a96cb2adeffd")]
 
 // Version information for an assembly consists of the following four values:
 //
