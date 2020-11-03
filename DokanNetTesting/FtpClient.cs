@@ -266,7 +266,7 @@ namespace DokanNetTesting
                             });
 
                             string name = parts[string.Empty];
-                            DateTime modify = DateTime.ParseExact(parts["modify"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                            DateTime modify = DateTime.ParseExact(parts["modify"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture).ToLocalTime();
                             Debug.Assert(name != null, nameof(name) + " != null");
 
                             switch (parts["type"]) {
@@ -403,6 +403,7 @@ namespace DokanNetTesting
             request.Credentials = new NetworkCredential(_UserName, _Password);
             request.UseBinary = true;
             request.UsePassive = true;
+            request.KeepAlive = true;
             return request;
         }
     }

@@ -5,12 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
 using DokanNet;
 using JetBrains.Annotations;
 using FileAccess = DokanNet.FileAccess;
 
 namespace DokanNetTesting
 {
+    public delegate void DokanOperationsDelegate(string fileName);
+
     public class DokanOperations : IDokanOperations
     {
         private const FileAccess DataAccess = FileAccess.ReadData | FileAccess.WriteData | FileAccess.AppendData | FileAccess.Execute | FileAccess.GenericExecute | FileAccess.GenericWrite | FileAccess.GenericRead;
@@ -19,12 +22,11 @@ namespace DokanNetTesting
         [NotNull]
         private readonly string _MinePath;
 
-        [NotNull]
-        private readonly string _BasePath;
 
-        public DokanOperations([NotNull] string minePath, [NotNull] string basePath) {
+
+        public DokanOperations([NotNull] string minePath) {
             _MinePath = minePath;
-            _BasePath = basePath;
+
         }
 
         public void Cleanup([NotNull] string fileName, [NotNull] IDokanFileInfo info) {
@@ -38,12 +40,40 @@ namespace DokanNetTesting
                     File.Delete(GetMinePath(fileName));
                 }
             }
+
+            if (_WriteFile.Contains(fileName)) {
+                _WriteFile.Remove(fileName);
+                Task.Factory.StartNew(() => {
+                    OnAfterWriteFile(fileName);
+                });
+            }
         }
 
         public void CloseFile(string fileName, [NotNull] IDokanFileInfo info) {
             (info.Context as FileStream)?.Dispose();
             info.Context = null;
             // could recreate cleanup code here but this is not called sometimes
+        }
+
+        [NotNull]
+        private readonly HashSet<string> _WriteFile = new HashSet<string>();
+
+        public event DokanOperationsDelegate BeforeWriteFile;
+
+        private void OnBeforeWriteFile(string filename) { 
+            BeforeWriteFile?.Invoke(filename); 
+        }
+
+        public event DokanOperationsDelegate BeforeReadFile;
+
+        private void OnBeforeReadFile(string filename) {
+            BeforeReadFile?.Invoke(filename);
+        }
+
+        public event DokanOperationsDelegate AfterWriteFile;
+
+        private void OnAfterWriteFile(string filename) { 
+            AfterWriteFile?.Invoke(filename); 
         }
 
         public NtStatus CreateFile([NotNull] string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, [NotNull] IDokanFileInfo info) {
@@ -53,7 +83,7 @@ namespace DokanNetTesting
             if (info.IsDirectory) {
                 try {
                     switch (mode) {
-                        case FileMode.Open:
+                        case FileMode.Open: {
                             if (!Directory.Exists(filePath)) {
                                 try {
                                     if (!File.GetAttributes(filePath).HasFlag(FileAttributes.Directory)) {
@@ -70,8 +100,9 @@ namespace DokanNetTesting
                             new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any();
                             // you can't list the directory
                             break;
+                        }
 
-                        case FileMode.CreateNew:
+                        case FileMode.CreateNew: {
                             if (Directory.Exists(filePath)) {
                                 return DokanResult.FileExists;
                             }
@@ -85,6 +116,7 @@ namespace DokanNetTesting
 
                             Directory.CreateDirectory(GetMinePath(fileName));
                             break;
+                        }
                     }
                 } catch (UnauthorizedAccessException) {
                     return DokanResult.AccessDenied;
@@ -103,7 +135,7 @@ namespace DokanNetTesting
                 }
 
                 switch (mode) {
-                    case FileMode.Open:
+                    case FileMode.Open: {
 
                         if (pathExists) {
                             // check if driver only wants to read attributes, security info, or open directory
@@ -117,6 +149,8 @@ namespace DokanNetTesting
                                 info.Context = new object();
                                 // must set it to someting if you return DokanError.Success
 
+                                OnBeforeReadFile(fileName);
+
                                 return DokanResult.Success;
                             }
                         } else {
@@ -124,28 +158,34 @@ namespace DokanNetTesting
                         }
 
                         break;
+                    }
 
-                    case FileMode.CreateNew:
+                    case FileMode.CreateNew: {
                         if (pathExists) {
                             return DokanResult.FileExists;
                         }
 
                         break;
+                    }
 
-                    case FileMode.Truncate:
+                    case FileMode.Truncate: {
                         if (!pathExists) {
                             return DokanResult.FileNotFound;
                         }
 
                         break;
+                    }
                 }
 
                 try {
-                    info.Context = new FileStream(filePath, mode, readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite, share, 4096, options);
+                    _WriteFile.Add(fileName);
+                    OnBeforeWriteFile(fileName);
 
                     if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create)) {
                         result = DokanResult.AlreadyExists;
                     }
+                    
+                    info.Context = new FileStream(filePath, mode, readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite, share, 4096, options);
 
                     bool fileCreated = mode == FileMode.CreateNew || mode == FileMode.Create || !pathExists && mode == FileMode.OpenOrCreate;
                     if (fileCreated) {
@@ -155,8 +195,8 @@ namespace DokanNetTesting
                         newAttributes &= ~FileAttributes.Normal;
                         File.SetAttributes(filePath, newAttributes);
                     }
-                } catch (UnauthorizedAccessException) // don't have access rights
-                {
+                } catch (UnauthorizedAccessException) {
+                    // don't have access rights
                     if (info.Context is FileStream fileStream) {
                         // returning AccessDenied cleanup and close won't be called,
                         // so we have to take care of the stream now
@@ -462,9 +502,7 @@ namespace DokanNetTesting
             return _MinePath + fileName;
         }
 
-        [NotNull]
-        private string GetBasePath([NotNull] string fileName) {
-            return _BasePath + fileName;
-        }
+
+       
     }
 }

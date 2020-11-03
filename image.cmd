@@ -1,0 +1,1 @@
+c:\Program Files\TortoiseGit\bin\TortoiseGitIDiff.exe /left:PATH /lefttitle:LEFT /right:PATH /righttitle:RIGHT /fit

@@ -32,7 +32,7 @@ This is a .NET wrapper over Dokan, and allows you to create your own file system
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="dokan_logo.png" Pack="true" PackagePath="\" />
+    <None Include="..\dokan_logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DokanNet", "DokanNet\DokanNet.csproj", "{75861EAE-B827-427E-9812-9FF78A9A6857}"
 EndProject
@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.
 	ProjectSection(ProjectDependencies) = postProject
 		{75861EAE-B827-427E-9812-9FF78A9A6857} = {75861EAE-B827-427E-9812-9FF78A9A6857}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegistryFS", "RegistryFS\RegistryFS.csproj", "{56C25B0A-14ED-45C4-AD65-27F67BD31834}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FA78D74-7FFE-4D91-A422-E961EF0A70C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56C25B0A-14ED-45C4-AD65-27F67BD31834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56C25B0A-14ED-45C4-AD65-27F67BD31834}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56C25B0A-14ED-45C4-AD65-27F67BD31834}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56C25B0A-14ED-45C4-AD65-27F67BD31834}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

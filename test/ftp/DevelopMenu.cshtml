@@ -1,0 +1,33 @@
+﻿@using EasyWeb.Server
+@inherits EasyWeb.WebSite.Razor.EwRazorControl
+
+@* Styly a javascript není potřeba přesouvat - jsou použity pouze na testovací doméně. *@
+
+@if (!EwCore.IsMainDomainRequest)
+{
+    <style>
+          </style>
+    <div class="DevelopMenu">
+        <input type="button" class="DevelopMenu-button debug-toggler" value="DEBUG" title="Zobrazí nebo skryje debug informace o panelech." />        
+    </div>
+    <script>
+        (function(document, window, $) {
+            function initDevelopMenu() {
+                var developMenu = $(".DevelopMenu");
+                developMenu
+                    .on("mouseover", function() {
+                        developMenu.css("max-width", developMenu[0].scrollWidth + "px");
+                    })
+                    .on("mouseout", function() {
+                        developMenu.css("max-width", "");
+                    });
+            }
+
+            $(function() {
+                initDevelopMenu();
+                initDebutToggler();
+            });
+
+        })(document, window, jQuery);
+    </script>
+}

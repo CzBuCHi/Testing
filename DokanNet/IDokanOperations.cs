@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
 
+/// <summary>
+/// Base namespace for %Dokan.
+/// </summary>
 namespace DokanNet
 {
-    /// <summary>
-    /// Base namespace for %Dokan.
-    /// </summary>
     /// <summary>
     /// %Dokan API callbacks interface.
     /// 
@@ -419,9 +419,12 @@ namespace DokanNet
         /// \see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365993(v=vs.85).aspx">About KTM (MSDN)</a>
         NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info);
     }
+}
 
-    /// <summary>
-    /// Namespace for AssemblyInfo and resource strings
-    /// </summary>
-// This is only for documentation of the DokanNet.Properties namespace.
+/// <summary>
+/// Namespace for AssemblyInfo and resource strings
+/// </summary>
+namespace DokanNet.Properties
+{
+    // This is only for documentation of the DokanNet.Properties namespace.
 }
